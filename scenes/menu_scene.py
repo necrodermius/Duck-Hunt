@@ -5,12 +5,12 @@ from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT
 class MenuScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        self.menu_bg = pygame.image.load("assets/bgs/1.png").convert_alpha()
+        self.menu_bg = pygame.image.load("assets/menus/main-menu.png").convert_alpha()
 
-        self.settings_button_rect = pygame.Rect(600, 50, 250, 60)
-        self.free_mode_rect = pygame.Rect(270, 300, 350, 60)
-        self.limited_ammo_rect = pygame.Rect(270, 400, 350, 60)
-        self.limited_time_rect = pygame.Rect(270, 500, 350, 60)
+        self.settings_button_rect = pygame.Rect(460, 59, 360, 85)
+        self.free_mode_rect = pygame.Rect(100, 345, 360, 85)
+        self.limited_ammo_rect = pygame.Rect(100, 490, 360, 85)
+        self.limited_time_rect = pygame.Rect(100, 635, 360, 85)
 
 #        self.font = pygame.font.SysFont(None, 48)
 
