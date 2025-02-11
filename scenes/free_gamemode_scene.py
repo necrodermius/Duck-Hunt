@@ -12,8 +12,7 @@ class GameScene:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pass # Постріл
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pass # Переходимо на сцену паузи
-
+                self.scene_manager.set_scene("pause")
 
     def update(self):
         # Оновлення качок
