@@ -5,7 +5,7 @@ from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT
 class MenuScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        self.menu_bg = pygame.image.load("assets/bgs/1.png").convert_alpha()
+        self.menu_bg = pygame.image.load("assets/menus/main-menu.png").convert_alpha()
 
         self.settings_button_rect = pygame.Rect(600, 50, 250, 60)
         self.free_mode_rect = pygame.Rect(270, 300, 350, 60)
