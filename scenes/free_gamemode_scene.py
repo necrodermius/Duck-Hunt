@@ -1,9 +1,10 @@
 import pygame
+from entities.duck import Duck
 
 class GameScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        # Список качок
+        self.ducks = [Duck(x=300, y=200)]
         # Зброя
         # Лічильники
 
@@ -15,12 +16,15 @@ class GameScene:
                 self.scene_manager.set_scene("pause")
 
     def update(self):
-        # Оновлення качок
+        for duck in self.ducks:
+            duck.update()
         # Перевіряємо попадання
         pass
 
     def draw(self, screen):
-        # Малюємо качок
+        for duck in self.ducks:
+            duck.draw(screen)
+            
         # Малюємо кулі
         # Малюємо текст (бали, кількість вистрілів)
         pass
