@@ -1,10 +1,13 @@
 import pygame
 from entities.duck import Duck
+import random
 
 class GameScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        self.ducks = [Duck(x=300, y=200)]
+        self.ducks = []  
+        self.last_spawn_time = pygame.time.get_ticks()
+        self.spawn_interval = 2000
         # Зброя
         # Лічильники
 
@@ -16,10 +19,18 @@ class GameScene:
                 self.scene_manager.set_scene("pause")
 
     def update(self):
+        current_time = pygame.time.get_ticks()
+        if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+            if random.choice([True, False]):
+                new_duck = Duck(x=random.randint(-200, -50), y=random.randint(100, 500), direction="left")
+            else:
+                new_duck = Duck(x=random.randint(900, 1000), y=random.randint(100, 500), direction="right")
+            
+            self.ducks.append(new_duck)
+            self.last_spawn_time = current_time
+
         for duck in self.ducks:
             duck.update()
-        # Перевіряємо попадання
-        pass
 
     def draw(self, screen):
         for duck in self.ducks:
