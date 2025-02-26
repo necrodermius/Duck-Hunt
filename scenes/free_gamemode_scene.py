@@ -41,11 +41,11 @@ class GameScene:
     def update(self):
         current_time = pygame.time.get_ticks()
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+            y_pos = random.randint(50, 500)  # Prevent spawn near banner
             if random.choice([True, False]):
-                new_duck = Duck(x=random.randint(-200, -50), y=random.randint(100, 500), move_angle=random.randint(-30, 30), direction="left")
+                new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20), direction="left")
             else:
-                new_duck = Duck(x=random.randint(900, 1000), y=random.randint(100, 500), move_angle=random.randint(-30, 30), direction="right")
-            
+                new_duck = Duck(x=random.randint(900, 1000), y=y_pos, move_angle=random.randint(-20, 20), direction="right")
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time
 
@@ -54,20 +54,21 @@ class GameScene:
 
     def draw(self, screen):
         screen.blit(self.game_bg, (0, 0))
+
+        for duck in self.ducks:
+            duck.draw(screen)
+
         self.gun.draw(screen)
         screen.blit(self.game_bn, (0, 600))
-        # Малюємо качок
 
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
+
 
         font = pygame.font.SysFont("Times New Roman", 36)
         time_surface = font.render(f"Час: {current_time_sec:.1f}", True, (255, 255, 255))
         total_shots_surface = font.render(f"Постірілів відбулося {self.shots_count}", True, (255, 255, 255))
         screen.blit(time_surface, (290, 615))
         screen.blit(total_shots_surface, (290, 645))
-
-        for duck in self.ducks:
-            duck.draw(screen)
             
         pass

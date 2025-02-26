@@ -22,8 +22,9 @@ class Duck:
             self.image_up = pygame.image.load("assets/targets/2.png")  
             self.image_down = pygame.image.load("assets/targets/1.png")  
 
-        self.image_up = pygame.transform.scale(self.image_up, (50, 50))
-        self.image_down = pygame.transform.scale(self.image_down, (50, 50))
+        self.size = random.randint(50, 80)
+        self.image_up = pygame.transform.scale(self.image_up, (self.size, self.size))
+        self.image_down = pygame.transform.scale(self.image_down, (self.size, self.size))
         self.image = self.image_up
 
         self.direction = direction
@@ -59,10 +60,10 @@ class Duck:
         else:
             self.image = self.image_down
 
-        if self.direction == "left" and (self.base_x > 900 or self.base_y < -50 or self.base_y > 650):
+        if self.direction == "left" and (self.base_x > 900 or self.base_y < -50 or self.base_y > 600):
             self.base_x = random.randint(-100, 0)
             self.base_y = random.randint(100, 500)
-        elif self.direction == "right" and (self.base_x < -100 or self.base_y < -50 or self.base_y > 650):
+        elif self.direction == "right" and (self.base_x < -100 or self.base_y < -50 or self.base_y > 600):
             self.base_x = random.randint(900, 1000)
             self.base_y = random.randint(100, 500)
 
@@ -72,5 +73,5 @@ class Duck:
         screen.blit(self.image, (self.x, self.y))
 
     def check_collision(self, rect):
-        duck_rect = pygame.Rect(self.x, self.y, 50, 50)
+        duck_rect = pygame.Rect(self.x, self.y, self.size, self.size)
         return duck_rect.colliderect(rect)
