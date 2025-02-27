@@ -102,19 +102,18 @@ class LimitedTimeGameModeScene:
         current_time_sec = current_time_ms / 1000.0
         remaining_time_sec = max(0, (self.time_limit - current_time_ms) / 1000.0)
 
-        font = pygame.font.SysFont('Times New Roman', 24)
+        font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 31)
 
-        time_surface = font.render(f"Час: {current_time_sec:.1f}", True, 'white')
-        remaining_surface = font.render(f"Залишилось: {remaining_time_sec:.1f}", True, 'white')
-        total_shots_surface = font.render(f"Пострілів: {self.shots_count}", True, 'white')
-        hits_surface = font.render(f"Збиті качки: {self.hits_count}", True, 'white')
-        score_surface = font.render(f"Очки: {self.score}", True, 'white')
+        remaining_surface = font.render(f"{remaining_time_sec:.1f}", True, 'white')
+        total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
+        hits_surface = font.render(f"{self.hits_count}", True, 'white')
+        score_surface = font.render(f"{self.score}", True, 'white')
 
-        screen.blit(time_surface, (290, 615))
-        screen.blit(remaining_surface, (290, 645))
-        screen.blit(total_shots_surface, (290, 675))
-        screen.blit(hits_surface, (290, 705))
-        screen.blit(score_surface, (510, 615))
+        screen.blit(score_surface, (377, 622))
+        screen.blit(remaining_surface, (360, 659))
+        screen.blit(total_shots_surface, (439, 697))
+        screen.blit(hits_surface, (488, 738))
+
 
     def go_to_score_scene(self, flag = False):
         current_time_ms = pygame.time.get_ticks() - self.start_time
