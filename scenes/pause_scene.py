@@ -6,7 +6,7 @@ class PauseScene:
         self.pause_bg = pygame.image.load("assets/menus/pause-menu.png").convert_alpha()
 
         self.return_rect = pygame.Rect(410, 417, 390, 73)
-        self.main_menu_rect = pygame.Rect(510, 560, 395, 70)
+        self.score_menu_rect = pygame.Rect(510, 560, 395, 70)
 
     def handle_events(self, events):
         for event in events:
@@ -14,8 +14,9 @@ class PauseScene:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.return_rect.collidepoint(mouse_pos):
                     self.scene_manager.set_scene("game")
-                elif self.main_menu_rect.collidepoint(mouse_pos):
-                    self.scene_manager.set_scene("menu")
+                elif self.score_menu_rect.collidepoint(mouse_pos):
+                    self.scene_manager.set_scene("score")
+
 
 
     def update(self):
