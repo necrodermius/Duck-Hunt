@@ -6,7 +6,7 @@ import random
 class GameScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        
+
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.restart_rect = pygame.Rect(670, 708, 210, 55)
 
@@ -59,11 +59,11 @@ class GameScene:
     def update(self):
         current_time = pygame.time.get_ticks()
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+            y_pos = random.randint(50, 500) 
             if random.choice([True, False]):
-                new_duck = Duck(x=random.randint(-200, -50), y=random.randint(100, 500), move_angle=random.randint(-30, 30), direction="left")
+                new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20), direction="left")
             else:
-                new_duck = Duck(x=random.randint(900, 1000), y=random.randint(100, 500), move_angle=random.randint(-30, 30), direction="right")
-            
+                new_duck = Duck(x=random.randint(900, 1000), y=y_pos, move_angle=random.randint(-20, 20), direction="right")
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time
 
@@ -72,6 +72,10 @@ class GameScene:
 
     def draw(self, screen):
         screen.blit(self.game_bg, (0, 0))
+
+        for duck in self.ducks:
+            duck.draw(screen)
+
         self.gun.draw(screen)
         for duck in self.ducks:
             duck.draw(screen)
