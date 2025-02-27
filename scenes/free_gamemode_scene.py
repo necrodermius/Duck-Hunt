@@ -84,14 +84,14 @@ class GameScene:
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
 
-        font = pygame.font.SysFont('Times New Roman', 24)
+        font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 31)
 
         score_surface = font.render(f"{self.score}", True, 'white')
         time_surface = font.render(f"{current_time_sec:.1f}", True, 'white')
         total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
         hits_surface = font.render(f"{self.hits_count}", True, 'white')
 
-        screen.blit(score_surface, (336, 629))
-        screen.blit(time_surface, (320, 665))
-        screen.blit(total_shots_surface, (400, 704))
-        screen.blit(hits_surface, (448, 746))
+        screen.blit(score_surface, (377, 622))
+        screen.blit(time_surface, (360, 659))
+        screen.blit(total_shots_surface, (439, 697))
+        screen.blit(hits_surface, (488, 738))

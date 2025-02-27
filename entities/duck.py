@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+from core.settings import DIFFICULTY_LEVEL
 
 class Duck:
     def __init__(self, x, y, move_angle, direction="left"):
@@ -8,12 +9,13 @@ class Duck:
         self.start_y = y
         self.y = y
         self.move_angle = math.radians(move_angle)
-        self.speed = random.randint(4, 7)
-
         self.amplitude = 30
         self.frequency = 0.05
         self.angle = 0
         self.direction = direction
+
+        self.size = 100
+        self.speed = 7
 
         if direction == "left":
             self.image_down = pygame.image.load("assets/targets/4.png")  
@@ -22,7 +24,19 @@ class Duck:
             self.image_up = pygame.image.load("assets/targets/2.png")  
             self.image_down = pygame.image.load("assets/targets/1.png")  
 
-        self.size = random.randint(50, 80)
+        if (DIFFICULTY_LEVEL[0] == 0):
+            self.speed = random.randint(3, 6)
+            self.size = random.randint(90, 120)
+
+        elif(DIFFICULTY_LEVEL[0] == 1):
+            self.speed = random.randint(6, 10)
+            self.size = random.randint(60, 90)
+    
+
+        elif(DIFFICULTY_LEVEL[0] == 2):
+            self.speed = random.randint(10, 14)
+            self.size = random.randint(30, 60)
+        
         self.image_up = pygame.transform.scale(self.image_up, (self.size, self.size))
         self.image_down = pygame.transform.scale(self.image_down, (self.size, self.size))
         self.image = self.image_up
@@ -78,4 +92,4 @@ class Duck:
 
     def get_score_value(self):
         duck_speed = abs(self.speed)
-        return int(10 + 5 * duck_speed)
+        return int(1/self.size + 5 * duck_speed)
