@@ -35,19 +35,19 @@ class ScoreScene:
         screen.blit(self.score_bg, (0, 0))
 
         # Приклад відображення тексту
-        font = pygame.font.SysFont('Times New Roman', 30)
+        font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 60)
 
         # Формуємо інформацію
-        time_surface = font.render(f"Час: {self.final_time:.1f} сек", True, 'white')
-        score_surface = font.render(f"Очки: {self.score}", True, 'white')
-        hits_surface = font.render(f"Збиті качки: {self.hits_count}", True, 'white')
-        shots_surface = font.render(f"Загальна кількість пострілів: {self.shots_count}", True, 'white')
+        time_surface = font.render(f"{self.final_time:.1f}", True, '#50757c')
+        score_surface = font.render(f"{self.score}", True, '#50757c')
+        hits_surface = font.render(f"{self.hits_count}", True, '#50757c')
+        shots_surface = font.render(f"{self.shots_count}", True, '#50757c')
 
         # Виводимо текст (позиції можна налаштовувати)
-        screen.blit(time_surface, (300, 300))
-        screen.blit(score_surface, (300, 340))
-        screen.blit(hits_surface, (300, 380))
-        screen.blit(shots_surface, (300, 420))
+        screen.blit(score_surface, (282, 158))
+        screen.blit(hits_surface, (378, 240))
+        screen.blit(shots_surface, (277, 321))
+        screen.blit(time_surface, (155, 403))
 
         # Тут можна додати надпис на кнопці повернення у меню (заглушка)
         # font.render("Меню", True, 'white'), ...

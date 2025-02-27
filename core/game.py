@@ -5,6 +5,7 @@ from scenes.menu_scene import MenuScene
 from scenes.free_gamemode_scene import GameScene
 from scenes.pause_scene import PauseScene
 from scenes.score_scene import ScoreScene
+from scenes.settings_scene import SettingsMenu
 from scenes.limited_ammo_gamemode_scene import LimitedAmmoGameModeScene
 from scenes.limited_time_gamemode_scene import LimitedTimeGameModeScene
 
@@ -21,6 +22,7 @@ class Game:
         self.scene_manager.add_scene("ammo", LimitedAmmoGameModeScene(self.scene_manager))
         self.scene_manager.add_scene("time", LimitedTimeGameModeScene(self.scene_manager))
         self.scene_manager.add_scene("score", ScoreScene(self.scene_manager))
+        self.scene_manager.add_scene("settings", SettingsMenu(self.scene_manager))
         self.scene_manager.set_scene("menu")
 
         self.clock = pygame.time.Clock()

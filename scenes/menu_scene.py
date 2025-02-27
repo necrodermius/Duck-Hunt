@@ -12,14 +12,12 @@ class MenuScene:
         self.limited_ammo_rect = pygame.Rect(100, 490, 360, 85)
         self.limited_time_rect = pygame.Rect(100, 635, 360, 85)
 
-#        self.font = pygame.font.SysFont(None, 48)
-
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.settings_button_rect.collidepoint(mouse_pos):
-                    print("Налаштування (покищо заглушка)")
+                    self.scene_manager.set_scene("settings")
                 elif self.free_mode_rect.collidepoint(mouse_pos):
                     self.scene_manager.set_scene("game")
                 elif self.limited_ammo_rect.collidepoint(mouse_pos):
