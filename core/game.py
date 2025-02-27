@@ -5,6 +5,7 @@ from scenes.menu_scene import MenuScene
 from scenes.free_gamemode_scene import GameScene
 from scenes.pause_scene import PauseScene
 from scenes.score_scene import ScoreScene
+from scenes.limited_ammo_gamemode_scene import LimitedAmmoGameModeScene
 
 
 class Game:
@@ -16,6 +17,7 @@ class Game:
         self.scene_manager.add_scene("menu", MenuScene(self.scene_manager))
         self.scene_manager.add_scene("pause", PauseScene(self.scene_manager))
         self.scene_manager.add_scene("game", GameScene(self.scene_manager))
+        self.scene_manager.add_scene("ammo", LimitedAmmoGameModeScene(self.scene_manager))
         self.scene_manager.add_scene("score", ScoreScene(self.scene_manager))
         self.scene_manager.set_scene("menu")
 
