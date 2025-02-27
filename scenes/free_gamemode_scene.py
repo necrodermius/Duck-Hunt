@@ -6,7 +6,7 @@ import random
 class GameScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        
+
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.menu_rect = pygame.Rect(670, 708, 210, 55)
 
@@ -41,7 +41,7 @@ class GameScene:
     def update(self):
         current_time = pygame.time.get_ticks()
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
-            y_pos = random.randint(50, 500)  # Prevent spawn near banner
+            y_pos = random.randint(50, 500) 
             if random.choice([True, False]):
                 new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20), direction="left")
             else:
@@ -67,7 +67,7 @@ class GameScene:
 
         font = pygame.font.SysFont("Times New Roman", 36)
         time_surface = font.render(f"Час: {current_time_sec:.1f}", True, (255, 255, 255))
-        total_shots_surface = font.render(f"Постірілів відбулося {self.shots_count}", True, (255, 255, 255))
+        total_shots_surface = font.render(f"Постірілів відбулося: {self.shots_count}", True, (255, 255, 255))
         screen.blit(time_surface, (290, 615))
         screen.blit(total_shots_surface, (290, 645))
             
