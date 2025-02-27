@@ -25,7 +25,8 @@ class MenuScene:
                 elif self.limited_ammo_rect.collidepoint(mouse_pos):
                     self.scene_manager.set_scene("ammo")
                 elif self.limited_time_rect.collidepoint(mouse_pos):
-                    print("Обмежений час (покищо заглушка)")
+                    self.scene_manager.scenes["time"].start_time = pygame.time.get_ticks()
+                    self.scene_manager.set_scene("time")
 
     def update(self):
         pass

@@ -3,6 +3,7 @@ from entities.gun import Gun
 from entities.duck import Duck
 import random
 
+
 class GameScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
@@ -13,16 +14,18 @@ class GameScene:
         self.game_bg = pygame.image.load("assets/bgs/free-play-bg.png").convert_alpha()
         self.game_bn = pygame.image.load("assets/banners/free-play-banner.png").convert_alpha()
 
-        self.ducks = []  
+        self.ducks = []
         self.last_spawn_time = pygame.time.get_ticks()
         self.spawn_interval = 2000
-        
+
         self.gun = Gun()
 
         self.score = 0
         self.hits_count = 0
         self.shots_count = 0
         self.start_time = pygame.time.get_ticks()
+
+        self.pause_start = None
 
     def restart(self):
         self.score = 0
@@ -31,17 +34,23 @@ class GameScene:
         self.start_time = pygame.time.get_ticks()
         self.ducks = []
 
-
     def handle_events(self, events):
         for event in events:
             mouse_pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.restart_rect.collidepoint(mouse_pos):
-                    # self.scene_manager.set_scene("menu")
                     self.restart()
                 elif self.pause_rect.collidepoint(mouse_pos):
+                    self.pause_start = pygame.time.get_ticks()
                     end_time_sec = (pygame.time.get_ticks() - self.start_time) / 1000.0
-                    self.scene_manager.scenes["score"].set_stats(end_time_sec, self.score, self.hits_count, self.shots_count)
+                    self.scene_manager.scenes["score"].set_stats(
+                        end_time_sec,
+                        self.score,
+                        self.hits_count,
+                        self.shots_count
+                    )
+                    self.scene_manager.scenes["pause"].previous_scene_name = "game"
+
                     self.scene_manager.set_scene("pause")
                 else:
                     self.shots_count += 1
@@ -52,18 +61,20 @@ class GameScene:
                             self.hits_count += 1
                             self.score += duck.get_score_value()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.pause_start = pygame.time.get_ticks()
                 self.scene_manager.set_scene("pause")
-
-
+                self.scene_manager.scenes["pause"].previous_scene_name = "game"
 
     def update(self):
         current_time = pygame.time.get_ticks()
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
-            y_pos = random.randint(50, 500) 
+            y_pos = random.randint(50, 500)
             if random.choice([True, False]):
-                new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20), direction="left")
+                new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20),
+                                direction="left")
             else:
-                new_duck = Duck(x=random.randint(900, 1000), y=y_pos, move_angle=random.randint(-20, 20), direction="right")
+                new_duck = Duck(x=random.randint(900, 1000), y=y_pos, move_angle=random.randint(-20, 20),
+                                direction="right")
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time
 
@@ -77,8 +88,6 @@ class GameScene:
             duck.draw(screen)
 
         self.gun.draw(screen)
-        for duck in self.ducks:
-            duck.draw(screen)
         screen.blit(self.game_bn, (0, 600))
 
         current_time_ms = pygame.time.get_ticks() - self.start_time
@@ -92,6 +101,6 @@ class GameScene:
         hits_surface = font.render(f"{self.hits_count}", True, 'white')
 
         screen.blit(score_surface, (336, 629))
-        screen.blit(time_surface, (320, 665))
+        screen.blit(time_surface, (420, 665))
         screen.blit(total_shots_surface, (400, 704))
         screen.blit(hits_surface, (448, 746))

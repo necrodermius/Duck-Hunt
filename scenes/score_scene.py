@@ -25,6 +25,7 @@ class ScoreScene:
                 if self.main_menu_rect.collidepoint(mouse_pos):
                     self.scene_manager.scenes["game"].restart()
                     self.scene_manager.scenes["ammo"].restart()
+                    self.scene_manager.scenes["time"].restart()
                     self.scene_manager.set_scene("menu")
 
     def update(self):

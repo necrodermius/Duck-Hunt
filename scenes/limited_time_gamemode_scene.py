@@ -3,7 +3,7 @@ import random
 from entities.gun import Gun
 from entities.duck import Duck
 
-class LimitedAmmoGameModeScene:
+class LimitedTimeGameModeScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
 
@@ -22,19 +22,19 @@ class LimitedAmmoGameModeScene:
         self.score = 0
         self.hits_count = 0
         self.shots_count = 0
+
         self.start_time = pygame.time.get_ticks()
+        self.time_limit = 10000  # 10 секунд, наприклад
 
-        self.ammo = 10  # наприклад, 10 пострілів
-
+        # ДЛЯ ПАУЗИ:
         self.pause_start = None
 
     def restart(self):
         self.score = 0
         self.hits_count = 0
         self.shots_count = 0
-        self.ammo = 10
-        self.start_time = pygame.time.get_ticks()
         self.ducks.clear()
+        self.start_time = pygame.time.get_ticks()
 
     def handle_events(self, events):
         for event in events:
@@ -43,31 +43,33 @@ class LimitedAmmoGameModeScene:
                 if self.restart_rect.collidepoint(mouse_pos):
                     self.restart()
                 elif self.pause_rect.collidepoint(mouse_pos):
+                    self.scene_manager.scenes["pause"].previous_scene_name = "time"
                     self.pause_start = pygame.time.get_ticks()
-                    self.scene_manager.scenes["pause"].previous_scene_name = "ammo"
+                    self.go_to_score_scene()
                     self.scene_manager.set_scene("pause")
                 else:
-                    if self.ammo > 0:
-                        self.ammo -= 1
-                        self.shots_count += 1
-
-                        bullet_rect = pygame.Rect(mouse_pos[0], mouse_pos[1], 1, 1)
-                        for duck in self.ducks[:]:
-                            if duck.check_collision(bullet_rect):
-                                self.ducks.remove(duck)
-                                self.hits_count += 1
-                                self.score += duck.get_score_value()
-
-                    if self.ammo == 0:
-                        self.go_to_score_scene()
+                    self.shots_count += 1
+                    bullet_rect = pygame.Rect(mouse_pos[0], mouse_pos[1], 1, 1)
+                    for duck in self.ducks[:]:
+                        if duck.check_collision(bullet_rect):
+                            self.ducks.remove(duck)
+                            self.hits_count += 1
+                            self.score += duck.get_score_value()
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.pause_start = pygame.time.get_ticks()
-                self.scene_manager.scenes["pause"].previous_scene_name = "ammo"
+                self.scene_manager.scenes["pause"].previous_scene_name = "time"
+                self.go_to_score_scene()
                 self.scene_manager.set_scene("pause")
 
     def update(self):
         current_time = pygame.time.get_ticks()
+        elapsed = current_time - self.start_time
+
+        if elapsed >= self.time_limit:
+            self.go_to_score_scene(flag=True)
+            return
+
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
             if random.choice([True, False]):
                 new_duck = Duck(
@@ -85,6 +87,7 @@ class LimitedAmmoGameModeScene:
                 )
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time
+
         for duck in self.ducks:
             duck.update()
 
@@ -97,23 +100,23 @@ class LimitedAmmoGameModeScene:
 
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
+        remaining_time_sec = max(0, (self.time_limit - current_time_ms) / 1000.0)
 
         font = pygame.font.SysFont('Times New Roman', 24)
 
-        time_surface = font.render(f"{current_time_sec:.1f}", True, 'white')
-        total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
-        hits_surface = font.render(f"{self.hits_count}", True, 'white')
-        score_surface = font.render(f"{self.score}", True, 'white')
-        ammo_surface = font.render(f"{self.ammo}", True, 'white')
+        time_surface = font.render(f"Час: {current_time_sec:.1f}", True, 'white')
+        remaining_surface = font.render(f"Залишилось: {remaining_time_sec:.1f}", True, 'white')
+        total_shots_surface = font.render(f"Пострілів: {self.shots_count}", True, 'white')
+        hits_surface = font.render(f"Збиті качки: {self.hits_count}", True, 'white')
+        score_surface = font.render(f"Очки: {self.score}", True, 'white')
 
-        screen.blit(time_surface, (400, 615))
-        screen.blit(total_shots_surface, (400, 645))
-        screen.blit(hits_surface, (400, 675))
-        screen.blit(score_surface, (500, 705))
-        screen.blit(ammo_surface, (510, 615))
+        screen.blit(time_surface, (290, 615))
+        screen.blit(remaining_surface, (290, 645))
+        screen.blit(total_shots_surface, (290, 675))
+        screen.blit(hits_surface, (290, 705))
+        screen.blit(score_surface, (510, 615))
 
-    def go_to_score_scene(self):
-        # Переходимо у "score", передаючи поточні дані
+    def go_to_score_scene(self, flag = False):
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
 
@@ -124,4 +127,5 @@ class LimitedAmmoGameModeScene:
             hits_count=self.hits_count,
             shots_count=self.shots_count
         )
-        self.scene_manager.set_scene("score")
+        if flag:
+            self.scene_manager.set_scene("score")
