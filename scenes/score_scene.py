@@ -3,9 +3,9 @@ import pygame
 class ScoreScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        # self.score_bg = pygame.image.load("").convert_alpha()
+        self.score_bg = pygame.image.load("assets/menus/score-menu.png").convert_alpha()
 
-        self.main_menu_rect = pygame.Rect(10, 10, 400, 400)
+        self.main_menu_rect = pygame.Rect(225, 552, 420, 95)
 
         self.final_time = 0
         self.score = 0
@@ -30,7 +30,7 @@ class ScoreScene:
         pass
 
     def draw(self, screen):
-        # screen.blit(self.score_bg, (0, 0))
+        screen.blit(self.score_bg, (0, 0))
 
         # Приклад відображення тексту
         font = pygame.font.SysFont('Times New Roman', 30)

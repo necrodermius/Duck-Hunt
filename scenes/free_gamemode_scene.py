@@ -86,12 +86,12 @@ class GameScene:
 
         font = pygame.font.SysFont('Times New Roman', 24)
 
-        time_surface = font.render(f"Час: {current_time_sec:.1f}", True, 'white')
-        total_shots_surface = font.render(f"Пострілів відбулося {self.shots_count}", True, 'white')
-        hits_surface = font.render(f"Збиті качки: {self.hits_count}", True, 'white')
-        score_surface = font.render(f"Очки: {self.score}", True, 'white')
+        score_surface = font.render(f"{self.score}", True, 'white')
+        time_surface = font.render(f"{current_time_sec:.1f}", True, 'white')
+        total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
+        hits_surface = font.render(f"{self.hits_count}", True, 'white')
 
-        screen.blit(time_surface, (290, 615))
-        screen.blit(total_shots_surface, (290, 645))
-        screen.blit(hits_surface, (290, 675))
-        screen.blit(score_surface, (290, 705))
+        screen.blit(score_surface, (336, 629))
+        screen.blit(time_surface, (320, 665))
+        screen.blit(total_shots_surface, (400, 704))
+        screen.blit(hits_surface, (448, 746))
