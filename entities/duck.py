@@ -75,3 +75,7 @@ class Duck:
     def check_collision(self, rect):
         duck_rect = pygame.Rect(self.x, self.y, self.size, self.size)
         return duck_rect.colliderect(rect)
+
+    def get_score_value(self):
+        duck_speed = abs(self.speed)
+        return int(10 + 5 * duck_speed)
