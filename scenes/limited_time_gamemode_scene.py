@@ -24,9 +24,8 @@ class LimitedTimeGameModeScene:
         self.shots_count = 0
 
         self.start_time = pygame.time.get_ticks()
-        self.time_limit = 10000  # 10 секунд, наприклад
+        self.time_limit = 30000 
 
-        # ДЛЯ ПАУЗИ:
         self.pause_start = None
 
     def restart(self):
