@@ -68,12 +68,11 @@ class GameScene:
     def update(self):
         current_time = pygame.time.get_ticks()
         if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
-            y_pos = random.randint(50, 500)
             if random.choice([True, False]):
-                new_duck = Duck(x=random.randint(-200, -50), y=y_pos, move_angle=random.randint(-20, 20),
+                new_duck = Duck(x=random.randint(-200, -50), y=random.randint(50, 500), move_angle=random.randint(-30, 30),
                                 direction="left")
             else:
-                new_duck = Duck(x=random.randint(900, 1000), y=y_pos, move_angle=random.randint(-20, 20),
+                new_duck = Duck(x=random.randint(900, 1000), y=random.randint(50, 500), move_angle=random.randint(-30, 30),
                                 direction="right")
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time

@@ -24,7 +24,7 @@ class LimitedAmmoGameModeScene:
         self.shots_count = 0
         self.start_time = pygame.time.get_ticks()
 
-        self.ammo = 10  # наприклад, 10 пострілів
+        self.ammo = 10
 
         self.pause_start = None
 
@@ -113,7 +113,6 @@ class LimitedAmmoGameModeScene:
         screen.blit(ammo_surface, (510, 615))
 
     def go_to_score_scene(self):
-        # Переходимо у "score", передаючи поточні дані
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
 

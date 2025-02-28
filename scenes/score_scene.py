@@ -34,22 +34,15 @@ class ScoreScene:
     def draw(self, screen):
         screen.blit(self.score_bg, (0, 0))
 
-        # Приклад відображення тексту
         font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 60)
 
-        # Формуємо інформацію
         time_surface = font.render(f"{self.final_time:.1f}", True, '#50757c')
         score_surface = font.render(f"{self.score}", True, '#50757c')
         hits_surface = font.render(f"{self.hits_count}", True, '#50757c')
         shots_surface = font.render(f"{self.shots_count}", True, '#50757c')
 
-        # Виводимо текст (позиції можна налаштовувати)
         screen.blit(score_surface, (282, 158))
         screen.blit(hits_surface, (378, 240))
         screen.blit(shots_surface, (277, 321))
         screen.blit(time_surface, (155, 403))
-
-        # Тут можна додати надпис на кнопці повернення у меню (заглушка)
-        # font.render("Меню", True, 'white'), ...
-        # Але зараз маємо лише прямокутник + handle_events()
 

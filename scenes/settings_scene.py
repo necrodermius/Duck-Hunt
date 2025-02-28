@@ -26,8 +26,6 @@ class SettingsMenu:
                     DIFFICULTY_LEVEL[0] = 2
                     self.scene_manager.set_scene("menu")
                     
-
-        
     def update(self):
         pass
 
