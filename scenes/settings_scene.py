@@ -15,7 +15,7 @@ class SettingsMenu:
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_pos = pygame.mouse.get_pos()
+                mouse_pos = event.pos
                 if self.easy_mode_rect.collidepoint(mouse_pos):
                     DIFFICULTY_LEVEL[0] = 0
                     self.difficulty = 0
