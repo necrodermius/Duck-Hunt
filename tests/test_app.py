@@ -5,13 +5,10 @@ import os
 
 from core.settings import DIFFICULTY_LEVEL
 from core.scene_manager import SceneManager
-from core.game import Game
 from scenes.free_gamemode_scene import GameScene
 from scenes.limited_ammo_gamemode_scene import LimitedAmmoGameModeScene
 from scenes.limited_time_gamemode_scene import LimitedTimeGameModeScene
 from scenes.menu_scene import MenuScene
-from scenes.pause_scene import PauseScene
-from scenes.score_scene import ScoreScene
 from scenes.settings_scene import SettingsMenu
 from entities.duck import Duck
 from entities.gun import Gun
@@ -111,28 +108,304 @@ class TestScenes:
         assert (scene_manager.active_scene == menu_scene), "Після вибору easy має переходити в 'menu'"
 
 
+class TestsGun:
+    @pytest.fixture
+    def gun(self, mocker):
+        mocker.patch('pygame.image.load', return_value=pygame.Surface((100, 100)))
+        mocker.patch('pygame.mixer.Sound')
+        return Gun()
+
+    def test_gun_init(self, gun):
+        assert gun.gun_image is not None
+        assert gun.shot_image is not None
+        assert gun.shot_triggered is False
+
+    def test_gun_draw_no_click(self, gun, mocker):
+        mocker.patch('pygame.mouse.get_pos', return_value=(400, 400))
+        mocker.patch('pygame.mouse.get_pressed', return_value=(0, 0, 0))
+        self.screen = mocker.Mock()
+        gun.draw(self.screen)
+        assert not gun.shot_triggered
+
+    def test_gun_draw_click_triggered(self, gun, mocker):
+        mocker.patch('pygame.mouse.get_pos', return_value=(450, 300))
+        mocker.patch('pygame.mouse.get_pressed', return_value=(1, 0, 0))
+        gun.shot_triggered = False
+        gun.draw(pygame.Surface((800, 600)))
+        assert gun.shot_triggered is True
+
+class TestsMenuScene:
+    @pytest.fixture
+    def menu_scene(self, mocker):
+        mocker.patch("pygame.image.load", return_value=pygame.Surface((100, 100)))
+        scene_manager_mock = mocker.Mock()
+        scene_manager_mock.scenes = {"time": mocker.Mock()}
+        return MenuScene(scene_manager_mock)
+    
+    def test_handle_events_settings(self, menu_scene, mocker):
+        mock_pos = (460 + 10, 59 + 10)  
+        mocker.patch('pygame.mouse.get_pos', return_value=mock_pos)
+
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=mock_pos)
+        menu_scene.handle_events([event])
+        
+        menu_scene.scene_manager.set_scene.assert_called_once_with("settings")
+
+    def test_handle_events_free_mode(self, menu_scene, mocker):
+        mock_pos = (100 + 10, 345 + 10)
+        mocker.patch('pygame.mouse.get_pos', return_value=mock_pos)
+
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=mock_pos)
+        menu_scene.handle_events([event])
+        
+        menu_scene.scene_manager.set_scene.assert_called_once_with("game")
+
+    def test_handle_events_limited_ammo(self, menu_scene, mocker):
+        mock_pos = (100 + 10, 490 + 10)
+        mocker.patch('pygame.mouse.get_pos', return_value=mock_pos)
+
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=mock_pos)
+        menu_scene.handle_events([event])
+        
+        menu_scene.scene_manager.set_scene.assert_called_once_with("ammo")
+
+    def test_handle_events_limited_time(self, menu_scene, mocker):
+        mock_pos = (100 + 10, 635 + 10)
+        mocker.patch('pygame.mouse.get_pos', return_value=mock_pos)
+        
+        mocker.patch('pygame.time.get_ticks', return_value=123456)
+
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=mock_pos)
+        menu_scene.handle_events([event])
+
+        assert menu_scene.scene_manager.scenes["time"].start_time == 123456
+        
+        menu_scene.scene_manager.set_scene.assert_called_once_with("time")
+
+    def test_handle_events_no_click(self, menu_scene, mocker):
+        mock_pos = (0, 0)
+        mocker.patch('pygame.mouse.get_pos', return_value=mock_pos)
+
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=3, pos=mock_pos)
+        menu_scene.handle_events([event])
+
+        menu_scene.scene_manager.set_scene.assert_not_called()
+
+    def test_draw(self, menu_scene, mocker):
+        screen_mock = mocker.Mock()
+        menu_scene.draw(screen_mock)
+        screen_mock.blit.assert_called_once_with(menu_scene.menu_bg, (0, 0))
+
+class TestsSettingsScene:
+    @pytest.fixture
+    def settings_scene(self, mocker):
+        mocker.patch('pygame.image.load', return_value=pygame.Surface((100, 100)))
+        self.scene_manager_mock = mocker.Mock()
+        return SettingsMenu(self.scene_manager_mock)
+
+    def test_handle_events_easy(self, settings_scene):
+        self.event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(420, 400))
+        settings_scene.handle_events([self.event])
+        assert DIFFICULTY_LEVEL[0] == 0
+        assert settings_scene.difficulty == 0
+
+    def test_handle_events_medium(self, settings_scene):
+        self.event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(420, 550))
+        settings_scene.handle_events([self.event])
+        assert DIFFICULTY_LEVEL[0] == 1
+        settings_scene.scene_manager.set_scene.assert_called_with("menu")
+
+    def test_handle_events_hard(self, settings_scene):
+        self.event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(420, 620))
+        settings_scene.handle_events([self.event])
+        assert DIFFICULTY_LEVEL[0] == 2
+        settings_scene.scene_manager.set_scene.assert_called_with("menu")
+
+class TestsFreeGameScene:
+    @pytest.fixture
+    def free_game_scene(self, mocker):
+        mocker.patch('pygame.image.load', return_value=pygame.Surface((100, 100)))
+        
+        self.scene_manager_mock = mocker.Mock()
+        self.scene_manager_mock.scenes = {
+            "score": mocker.Mock(),
+            "pause": mocker.Mock()
+        }
+        
+        return GameScene(self.scene_manager_mock)
+
+    def test_restart(self, free_game_scene):
+        free_game_scene.score = 150
+        free_game_scene.hits_count = 3
+        free_game_scene.shots_count = 5
+        free_game_scene.ducks = [Duck(100, 100, 45)]
+
+        free_game_scene.restart()
+
+        assert free_game_scene.score == 0
+        assert free_game_scene.hits_count == 0
+        assert free_game_scene.shots_count == 0
+        assert free_game_scene.ducks == []
+
+    def test_handle_events_click_restart(self, free_game_scene, mocker):
+        self.event_mock = mocker.Mock(type=pygame.MOUSEBUTTONDOWN, button=1)
+        mocker.patch('pygame.mouse.get_pos', return_value=(700, 720))
+        self.restart_mock = mocker.patch.object(free_game_scene, 'restart')
+
+        free_game_scene.handle_events([self.event_mock])
+
+        self.restart_mock.assert_called_once()
+
+    def test_handle_events_click_pause(self, free_game_scene, mocker):
+        self.event_mock = mocker.Mock(type=pygame.MOUSEBUTTONDOWN, button=1)
+        mocker.patch('pygame.mouse.get_pos', return_value=(700, 640))
+        
+        free_game_scene.handle_events([self.event_mock])
+
+        free_game_scene.scene_manager.set_scene.assert_called_once_with("pause")
+        assert free_game_scene.scene_manager.scenes["pause"].previous_scene_name == "game"
+
+    def test_handle_events_shoot_duck(self, free_game_scene, mocker):
+        self.duck_mock = mocker.Mock()
+        self.duck_mock.check_collision.return_value = True
+        self.duck_mock.get_score_value.return_value = 10
+
+        free_game_scene.ducks.append(self.duck_mock)
+        
+        self.event_mock = mocker.Mock(type=pygame.MOUSEBUTTONDOWN, button=1)
+        mocker.patch('pygame.mouse.get_pos', return_value=(100, 100))
+        
+        free_game_scene.handle_events([self.event_mock])
+
+        assert free_game_scene.score == 10 or free_game_scene.score == 35 or free_game_scene.score == 45  
+        assert free_game_scene.hits_count == 1
+        assert free_game_scene.shots_count == 1
+        assert self.duck_mock not in free_game_scene.ducks
+
+    def test_go_to_score_scene(self, free_game_scene):
+        current_time_ms = pygame.time.get_ticks() - free_game_scene.start_time
+        current_time_sec = current_time_ms / 1000.0
+
+        score_scene = free_game_scene.scene_manager.scenes["score"]
+        score_scene.set_stats(
+            time_sec=current_time_sec,
+            score=free_game_scene.score,
+            hits_count=free_game_scene.hits_count,
+            shots_count=free_game_scene.shots_count
+        )
+        free_game_scene.scene_manager.set_scene("score")
+
+    def test_update_spawns_ducks(self, free_game_scene, mocker):
+        mocker.patch('pygame.time.get_ticks', return_value=free_game_scene.last_spawn_time + 2500)
+        mocker.patch('random.choice', return_value=True)
+        mocker.patch('random.randint', return_value=100)
+
+        self.initial_duck_count = len(free_game_scene.ducks)
+        free_game_scene.update()
+
+        assert len(free_game_scene.ducks) == self.initial_duck_count + 1
+
+class TestsLimitedTimeScene:
+    @pytest.fixture
+    def limited_time_scene(self, mocker):
+        mocker.patch('pygame.image.load', return_value=pygame.Surface((100, 100)))
+        scene_manager_mock = mocker.Mock()
+        
+        score_scene_mock = mocker.Mock()
+        pause_scene_mock = mocker.Mock()
+
+        scene_manager_mock.scenes = {
+            "score": score_scene_mock,
+            "pause": pause_scene_mock
+        }
+
+        scene = LimitedTimeGameModeScene(scene_manager_mock)
+        scene.time_limit = 10000 
+        return scene
+
+    def test_restart(self, limited_time_scene):
+        limited_time_scene.score = 100
+        limited_time_scene.hits_count = 5
+        limited_time_scene.shots_count = 5
+        limited_time_scene.ducks = ['duck1']
+        limited_time_scene.restart()
+        assert limited_time_scene.score == 0
+        assert limited_time_scene.hits_count == 0
+        assert len(limited_time_scene.ducks) == 0
+
+    def test_handle_events_click_restart(self, limited_time_scene, mocker):
+        event = mocker.Mock(type=pygame.MOUSEBUTTONDOWN, button=1)
+        mocker.patch('pygame.mouse.get_pos', return_value=(700, 720))
+        mocker.patch.object(limited_time_scene, 'restart')
+        limited_time_scene.handle_events([event])
+        limited_time_scene.restart.assert_called_once()
+
+    def test_go_to_score_scene(self, limited_time_scene):
+        limited_time_scene.score = 200
+        limited_time_scene.hits_count = 20
+        limited_time_scene.shots_count = 25
+        limited_time_scene.go_to_score_scene(flag=True)
+
+        limited_time_scene.scene_manager.set_scene.assert_called_once_with("score")
+        limited_time_scene.scene_manager.scenes["score"].set_stats.assert_called_once()
+
+class TestsLimitedAmmoScene:
+    @pytest.fixture
+    def limited_ammo_scene(self, mocker):
+        mocker.patch('pygame.image.load', return_value=pygame.Surface((100, 100)))
+        scene_manager_mock = mocker.Mock()
+        scene_manager_mock.scenes = {
+            "score": mocker.Mock(),
+            "pause": mocker.Mock()
+        }
+        return LimitedAmmoGameModeScene(scene_manager_mock)
+
+    def test_restart(self, limited_ammo_scene):
+        limited_ammo_scene.score = 50
+        limited_ammo_scene.ammo = 0
+        limited_ammo_scene.hits_count = 5
+        limited_ammo_scene.shots_count = 5
+        limited_ammo_scene.ducks = [1,2,3]
+
+        limited_ammo_scene.restart()
+
+        assert limited_ammo_scene.score == 0
+        assert limited_ammo_scene.hits_count == 0
+        assert limited_ammo_scene.ammo == 10
+        assert limited_ammo_scene.ducks == []
+
+    def test_handle_events_ammo_decrease(self, limited_ammo_scene, mocker):
+        event = mocker.Mock(type=pygame.MOUSEBUTTONDOWN, button=1)
+        mocker.patch('pygame.mouse.get_pos', return_value=(0, 0))
+        limited_ammo_scene.ammo = 10
+
+        limited_ammo_scene.handle_events([event])
+
+        assert limited_ammo_scene.ammo == 9
+        assert limited_ammo_scene.shots_count == 1
+
+    def test_go_to_score_scene(self, limited_ammo_scene):
+        limited_ammo_scene.score = 100
+        limited_ammo_scene.hits_count = 10
+        limited_ammo_scene.shots_count = 20
+
+        limited_ammo_scene.go_to_score_scene()
+
+        limited_ammo_scene.scene_manager.scenes["score"].set_stats.assert_called_once()
+        limited_ammo_scene.scene_manager.set_scene.assert_called_once_with("score")
+
 @pytest.fixture
 def scene_manager():
-    """Створює "чистий" SceneManager для кожного тесту."""
     return SceneManager()
 
 
 @pytest.fixture
 def prepared_scenes(scene_manager):
-    """
-    Створює й додає в SceneManager базові сцени:
-    - 'game' (free mode)
-    - 'ammo' (limited ammo)
-    - 'time' (limited time)
-    - 'menu' (MenuScene)
-
-    Повертає кортеж (game_scene, ammo_scene, time_scene, menu_scene).
-    """
     game_scene = GameScene(scene_manager)
     ammo_scene = LimitedAmmoGameModeScene(scene_manager)
     time_scene = LimitedTimeGameModeScene(scene_manager)
     menu_scene = MenuScene(scene_manager)
-
+    
     scene_manager.add_scene("game", game_scene)
     scene_manager.add_scene("ammo", ammo_scene)
     scene_manager.add_scene("time", time_scene)
@@ -143,29 +416,19 @@ def prepared_scenes(scene_manager):
 
 class TestPauseScene:
     def test_return_button(self, scene_manager):
-        """
-        Перевіряємо, що клік по return_rect викликає resume_previous_scene(),
-        переключаємося на попередню сцену,
-        і якщо був встановлений pause_start - воно зсуває start_time.
-        """
-        # Додаємо "game" як попередню сцену:
         game_scene = GameScene(scene_manager)
         scene_manager.add_scene("game", game_scene)
 
-        # Створюємо PauseScene:
         pause_scene = PauseScene(scene_manager)
-        pause_scene.previous_scene_name = "game"  # Вказуємо, що повертаємося у "game"
+        pause_scene.previous_scene_name = "game"  
         scene_manager.add_scene("pause", pause_scene)
 
-        # Робимо "pause" активною
         scene_manager.set_scene("pause")
 
-        # Імітуємо, що у game_scene був pause_start і start_time
-        game_scene.pause_start = pygame.time.get_ticks() - 1000  # на секунду раніше
+        game_scene.pause_start = pygame.time.get_ticks() - 1000 
         initial_start_time = 5000
         game_scene.start_time = initial_start_time
 
-        # Координати всередині return_rect = (410,417,390,73), припустимо (420,420)
         click_event = pygame.event.Event(
             pygame.MOUSEBUTTONDOWN,
             button=1,
@@ -173,31 +436,23 @@ class TestPauseScene:
         )
         pause_scene.handle_events([click_event])
 
-        # Перевіряємо, що сцена тепер "game"
         assert scene_manager.active_scene == game_scene, (
             "Після кліку на return_rect маємо повернутися у 'game'."
         )
 
-        # Перевіряємо, що start_time збільшився
-        # тобто що пауза дійсно додала 1 секунду
         assert game_scene.start_time > initial_start_time, (
             "При відновленні з паузи start_time має зрости на період, поки сцена була на паузі."
         )
 
     def test_score_button(self, scene_manager):
-        """
-        Перевірка, що клік по score_menu_rect -> перехід у 'score'.
-        """
         score_scene = ScoreScene(scene_manager)
         scene_manager.add_scene("score", score_scene)
 
         pause_scene = PauseScene(scene_manager)
         scene_manager.add_scene("pause", pause_scene)
 
-        # Робимо активною "pause"
         scene_manager.set_scene("pause")
 
-        # Клік у score_menu_rect = (510,560,395,70), беремо точку (520,570)
         click_event = pygame.event.Event(
             pygame.MOUSEBUTTONDOWN,
             button=1,
@@ -212,13 +467,9 @@ class TestPauseScene:
 
 class TestScoreScene:
     def test_set_stats(self, scene_manager):
-        """
-        Перевірка, що set_stats() зберігає передані значення у відповідних полях.
-        """
         score_scene = ScoreScene(scene_manager)
         scene_manager.add_scene("score", score_scene)
 
-        # Передаємо дані
         time_sec = 123.45
         score = 999
         hits = 10
@@ -239,12 +490,6 @@ class TestScoreScene:
         """
         (game_scene, ammo_scene, time_scene, menu_scene) = prepared_scenes
 
-        # Переконаємося, що в game_scene / ammo_scene / time_scene є методи restart()
-        # (вони там реалізовані, і обнуляють певні дані)
-        # Для тесту можемо перевірити, що вони працюють чи були викликані.
-        # Проте наразі просто перевіримо стан до/після.
-
-        # Налаштуємо якісь не нульові дані, щоб потім перевірити, що restart() їх обнуляє.
         game_scene.score = 100
         ammo_scene.score = 200
         time_scene.score = 300
@@ -253,7 +498,6 @@ class TestScoreScene:
         scene_manager.add_scene("score", score_scene)
         scene_manager.set_scene("score")
 
-        # Клік у main_menu_rect = (225, 552, 420, 95). Припустимо (300, 560).
         click_event = pygame.event.Event(
             pygame.MOUSEBUTTONDOWN,
             button=1,
@@ -261,12 +505,9 @@ class TestScoreScene:
         )
         score_scene.handle_events([click_event])
 
-        # Перевіряємо, що active_scene тепер menu_scene
         assert scene_manager.active_scene == menu_scene, (
             "Після кліку по main_menu_rect має переходити в 'menu'."
         )
-
-        # Перевіряємо, що restart() подіяв - (score має бути обнулений)
         assert game_scene.score == 0, (
             "Очікуємо, що game_scene.restart() обнулило score."
         )
@@ -328,7 +569,7 @@ class TestDuck:
 
     @pytest.mark.parametrize("difficulty", [0, 1, 2])
     def test_get_score_value(self, reset_difficulty, difficulty):
-        random.seed(101)  # для стабільності
+        random.seed(101)  
         DIFFICULTY_LEVEL[0] = difficulty
 
         duck = Duck(x=0, y=0, move_angle=10, direction="left")
