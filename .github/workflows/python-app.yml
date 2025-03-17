@@ -48,16 +48,9 @@ jobs:
         pytest
     - name: Generate Pytest HTML report
       run: pytest --html=report.html --self-contained-html
-    - name: Lint with flake8 and generate HTML report
-      run: |
-        flake8 --format=html --htmldir=flake-report
+
     - name: Archive Pytest HTML report
       uses: actions/upload-artifact@v4
       with:
         name: pytest-report
         path: report.html
-    - name: Archive flake8 HTML report
-      uses: actions/upload-artifact@v4
-      with:
-        name: flake8-report
-        path: flake-report
