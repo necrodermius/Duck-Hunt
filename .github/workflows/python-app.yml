@@ -29,10 +29,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-    - name: Install PulseAudio (virtual audio driver)
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y pulseaudio
+
     - name: Set environment variable for Pygame
       run: |
         echo "SDL_AUDIODRIVER=dummy" >> $GITHUB_ENV
@@ -54,14 +51,14 @@ jobs:
       run: pytest --html=report.html --self-contained-html
     - name: Lint with flake8 and generate HTML report
       run: |
-        flake8 . --max-line-length=127 --max-complexity=10 --statistics --output-file=flake8_report.html
+        flake8 . --max-line-length=127 --max-complexity=10 --statistics --output-file=flake8_report.txt
     - name: Archive Pytest HTML report
       uses: actions/upload-artifact@v4
       with:
         name: pytest-report
         path: report.html
-    - name: Archive flake8 HTML report
+    - name: Archive flake8 TXT report
       uses: actions/upload-artifact@v4
       with:
         name: flake8-report
-        path: flake8_report.html
+        path: flake8_report.txt
