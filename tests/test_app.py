@@ -16,6 +16,11 @@ from scenes.settings_scene import SettingsMenu
 from entities.duck import Duck
 from entities.gun import Gun
 
+@pytest.fixture(autouse=True)
+def mock_pygame_mixer_init(mocker):
+    with mocker.patch('pygame.mixer.init') as mock_init:
+        yield mock_init
+
 
 class TestCore:
     def test_scene_manager_add_and_set_scene(self, scene_manager):
@@ -140,7 +145,7 @@ class TestsGun:
         mocker.patch(
             'pygame.image.load', return_value=pygame.Surface((100, 100))
         )
-        #mocker.patch('pygame.mixer.Sound')
+        # mocker.patch('pygame.mixer.Sound')
         return Gun()
 
     def test_gun_init(self, gun):
