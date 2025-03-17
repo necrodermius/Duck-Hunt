@@ -140,7 +140,7 @@ class TestsGun:
         mocker.patch(
             'pygame.image.load', return_value=pygame.Surface((100, 100))
         )
-        mocker.patch('pygame.mixer.Sound')
+        #mocker.patch('pygame.mixer.Sound')
         return Gun()
 
     def test_gun_init(self, gun):
