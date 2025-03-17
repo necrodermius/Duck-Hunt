@@ -5,7 +5,8 @@ class ScoreScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.score_bg = pygame.image.load(
-            "assets/menus/score-menu.png").convert_alpha()
+            "assets/menus/score-menu.png"
+        ).convert_alpha()
 
         self.main_menu_rect = pygame.Rect(225, 552, 420, 95)
 
