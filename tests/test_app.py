@@ -20,6 +20,8 @@ from entities.gun import Gun
 def mock_pygame_mixer_init(mocker):
     with mocker.patch('pygame.mixer.init') as mock_init:
         yield mock_init
+    with mocker.patch('pygame.mixer.Sound') as mock_sound:
+        yield mock_sound
 
 
 class TestCore:
