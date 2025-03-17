@@ -46,7 +46,7 @@ jobs:
     - name: Generate Pytest HTML report
       run: pytest --html=report.html --self-contained-html
     - name: Archive Pytest HTML report
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: pytest-report
         path: report.html
