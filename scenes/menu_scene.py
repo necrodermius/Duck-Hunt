@@ -1,11 +1,11 @@
 import pygame
-from core.settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class MenuScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        self.menu_bg = pygame.image.load("assets/menus/main-menu.png").convert_alpha()
+        self.menu_bg = pygame.image.load(
+            "assets/menus/main-menu.png").convert_alpha()
 
         self.settings_button_rect = pygame.Rect(460, 59, 360, 85)
         self.free_mode_rect = pygame.Rect(100, 345, 360, 85)
@@ -23,7 +23,8 @@ class MenuScene:
                 elif self.limited_ammo_rect.collidepoint(mouse_pos):
                     self.scene_manager.set_scene("ammo")
                 elif self.limited_time_rect.collidepoint(mouse_pos):
-                    self.scene_manager.scenes["time"].start_time = pygame.time.get_ticks()
+                    (self.scene_manager.scenes["time"]
+                     .start_time) = pygame.time.get_ticks()
                     self.scene_manager.set_scene("time")
 
     def update(self):
@@ -31,4 +32,3 @@ class MenuScene:
 
     def draw(self, screen):
         screen.blit(self.menu_bg, (0, 0))
-

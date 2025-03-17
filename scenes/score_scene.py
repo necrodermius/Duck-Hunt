@@ -1,9 +1,11 @@
 import pygame
 
+
 class ScoreScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
-        self.score_bg = pygame.image.load("assets/menus/score-menu.png").convert_alpha()
+        self.score_bg = pygame.image.load(
+            "assets/menus/score-menu.png").convert_alpha()
 
         self.main_menu_rect = pygame.Rect(225, 552, 420, 95)
 
@@ -45,4 +47,3 @@ class ScoreScene:
         screen.blit(hits_surface, (378, 240))
         screen.blit(shots_surface, (277, 321))
         screen.blit(time_surface, (155, 403))
-
