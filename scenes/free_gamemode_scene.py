@@ -11,10 +11,8 @@ class GameScene:
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.restart_rect = pygame.Rect(670, 708, 210, 55)
 
-        self.game_bg = pygame.image.load(
-            "assets/bgs/free-play-bg.png").convert_alpha()
-        self.game_bn = pygame.image.load(
-            "assets/banners/free-play-banner.png").convert_alpha()
+        self.game_bg = pygame.image.load("assets/bgs/free-play-bg.png").convert_alpha()
+        self.game_bn = pygame.image.load("assets/banners/free-play-banner.png").convert_alpha()
 
         self.ducks = []
         self.last_spawn_time = pygame.time.get_ticks()
