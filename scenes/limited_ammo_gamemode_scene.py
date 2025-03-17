@@ -3,6 +3,7 @@ import random
 from entities.gun import Gun
 from entities.duck import Duck
 
+
 class LimitedAmmoGameModeScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
@@ -10,8 +11,10 @@ class LimitedAmmoGameModeScene:
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.restart_rect = pygame.Rect(670, 708, 210, 55)
 
-        self.game_bg = pygame.image.load("assets/bgs/free-play-bg.png").convert_alpha()
-        self.game_bn = pygame.image.load("assets/banners/free-play-banner.png").convert_alpha()
+        self.game_bg = pygame.image.load(
+            "assets/bgs/free-play-bg.png").convert_alpha()
+        self.game_bn = pygame.image.load(
+            "assets/banners/free-play-banner.png").convert_alpha()
 
         self.ducks = []
         self.last_spawn_time = pygame.time.get_ticks()
@@ -44,14 +47,16 @@ class LimitedAmmoGameModeScene:
                     self.restart()
                 elif self.pause_rect.collidepoint(mouse_pos):
                     self.pause_start = pygame.time.get_ticks()
-                    self.scene_manager.scenes["pause"].previous_scene_name = "ammo"
+                    (self.scene_manager.scenes["pause"]
+                     .previous_scene_name) = "ammo"
                     self.scene_manager.set_scene("pause")
                 else:
                     if self.ammo > 0:
                         self.ammo -= 1
                         self.shots_count += 1
 
-                        bullet_rect = pygame.Rect(mouse_pos[0], mouse_pos[1], 1, 1)
+                        bullet_rect = pygame.Rect(mouse_pos[0],
+                                                  mouse_pos[1], 1, 1)
                         for duck in self.ducks[:]:
                             if duck.check_collision(bullet_rect):
                                 self.ducks.remove(duck)
@@ -68,7 +73,9 @@ class LimitedAmmoGameModeScene:
 
     def update(self):
         current_time = pygame.time.get_ticks()
-        if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+        if (len(self.ducks) < 15
+                and current_time - self.last_spawn_time
+                > self.spawn_interval):
             if random.choice([True, False]):
                 new_duck = Duck(
                     x=random.randint(-200, -50),
@@ -100,11 +107,14 @@ class LimitedAmmoGameModeScene:
 
         font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 31)
 
-        time_surface = font.render(f"{current_time_sec:.1f}", True, 'white')
-        total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
-        hits_surface = font.render(f"{self.hits_count}", True, 'white')
-        score_surface = font.render(f"{self.score}", True, 'white')
-        ammo_surface = font.render(f"{self.ammo}", True, 'white')
+        time_surface = font.render(
+            f"{current_time_sec:.1f}", True, 'white')
+        hits_surface = font.render(
+            f"{self.hits_count}", True, 'white')
+        score_surface = font.render(
+            f"{self.score}", True, 'white')
+        ammo_surface = font.render(
+            f"{self.ammo}", True, 'white')
 
         screen.blit(score_surface, (377, 622))
         screen.blit(time_surface, (360, 659))

@@ -3,6 +3,7 @@ import random
 from entities.gun import Gun
 from entities.duck import Duck
 
+
 class LimitedTimeGameModeScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
@@ -10,8 +11,10 @@ class LimitedTimeGameModeScene:
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.restart_rect = pygame.Rect(670, 708, 210, 55)
 
-        self.game_bg = pygame.image.load("assets/bgs/free-play-bg.png").convert_alpha()
-        self.game_bn = pygame.image.load("assets/banners/free-play-banner.png").convert_alpha()
+        self.game_bg = pygame.image.load(
+            "assets/bgs/free-play-bg.png").convert_alpha()
+        self.game_bn = pygame.image.load(
+            "assets/banners/free-play-banner.png").convert_alpha()
 
         self.ducks = []
         self.last_spawn_time = pygame.time.get_ticks()
@@ -24,7 +27,7 @@ class LimitedTimeGameModeScene:
         self.shots_count = 0
 
         self.start_time = pygame.time.get_ticks()
-        self.time_limit = 30000 
+        self.time_limit = 30000
 
         self.pause_start = None
 
@@ -42,7 +45,8 @@ class LimitedTimeGameModeScene:
                 if self.restart_rect.collidepoint(mouse_pos):
                     self.restart()
                 elif self.pause_rect.collidepoint(mouse_pos):
-                    self.scene_manager.scenes["pause"].previous_scene_name = "time"
+                    (self.scene_manager.scenes["pause"]
+                     .previous_scene_name) = "time"
                     self.pause_start = pygame.time.get_ticks()
                     self.go_to_score_scene()
                     self.scene_manager.set_scene("pause")
@@ -69,7 +73,9 @@ class LimitedTimeGameModeScene:
             self.go_to_score_scene(flag=True)
             return
 
-        if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+        if (len(self.ducks) < 15
+                and current_time - self.last_spawn_time
+                > self.spawn_interval):
             if random.choice([True, False]):
                 new_duck = Duck(
                     x=random.randint(-200, -50),
@@ -98,23 +104,26 @@ class LimitedTimeGameModeScene:
         screen.blit(self.game_bn, (0, 600))
 
         current_time_ms = pygame.time.get_ticks() - self.start_time
-        current_time_sec = current_time_ms / 1000.0
-        remaining_time_sec = max(0, (self.time_limit - current_time_ms) / 1000.0)
+        remaining_time_sec = max(
+            0, (self.time_limit - current_time_ms) / 1000.0)
 
         font = pygame.font.Font("assets/font/PT-Serif-Bold-Italic.ttf", 31)
 
-        remaining_surface = font.render(f"{remaining_time_sec:.1f}", True, 'white')
-        total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
-        hits_surface = font.render(f"{self.hits_count}", True, 'white')
-        score_surface = font.render(f"{self.score}", True, 'white')
+        remaining_surface = font.render(
+            f"{remaining_time_sec:.1f}", True, 'white')
+        total_shots_surface = font.render(
+            f"{self.shots_count}", True, 'white')
+        hits_surface = font.render(
+            f"{self.hits_count}", True, 'white')
+        score_surface = font.render(
+            f"{self.score}", True, 'white')
 
         screen.blit(score_surface, (377, 622))
         screen.blit(remaining_surface, (360, 659))
         screen.blit(total_shots_surface, (439, 697))
         screen.blit(hits_surface, (488, 738))
 
-
-    def go_to_score_scene(self, flag = False):
+    def go_to_score_scene(self, flag=False):
         current_time_ms = pygame.time.get_ticks() - self.start_time
         current_time_sec = current_time_ms / 1000.0
 

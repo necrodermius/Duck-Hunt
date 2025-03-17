@@ -29,10 +29,12 @@ class PauseScene:
         screen.blit(self.pause_bg, (0, 0))
 
     def resume_previous_scene(self):
-        prev_scene = self.scene_manager.scenes[self.previous_scene_name]
+        prev_scene = self.scene_manager.scenes[
+            self.previous_scene_name]
 
         if (hasattr(prev_scene, 'pause_start') and
                 prev_scene.pause_start is not None):
+    
             paused_duration = pygame.time.get_ticks() - prev_scene.pause_start
             prev_scene.start_time += paused_duration
             prev_scene.pause_start = None

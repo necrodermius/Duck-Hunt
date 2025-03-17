@@ -11,8 +11,10 @@ class GameScene:
         self.pause_rect = pygame.Rect(670, 630, 210, 55)
         self.restart_rect = pygame.Rect(670, 708, 210, 55)
 
-        self.game_bg = pygame.image.load("assets/bgs/free-play-bg.png").convert_alpha()
-        self.game_bn = pygame.image.load("assets/banners/free-play-banner.png").convert_alpha()
+        self.game_bg = pygame.image.load(
+            "assets/bgs/free-play-bg.png").convert_alpha()
+        self.game_bn = pygame.image.load(
+            "assets/banners/free-play-banner.png").convert_alpha()
 
         self.ducks = []
         self.last_spawn_time = pygame.time.get_ticks()
@@ -42,14 +44,16 @@ class GameScene:
                     self.restart()
                 elif self.pause_rect.collidepoint(mouse_pos):
                     self.pause_start = pygame.time.get_ticks()
-                    end_time_sec = (pygame.time.get_ticks() - self.start_time) / 1000.0
+                    end_time_sec = (pygame.time.get_ticks()
+                                    - self.start_time) / 1000.0
                     self.scene_manager.scenes["score"].set_stats(
                         end_time_sec,
                         self.score,
                         self.hits_count,
                         self.shots_count
                     )
-                    self.scene_manager.scenes["pause"].previous_scene_name = "game"
+                    (self.scene_manager.scenes["pause"]
+                     .previous_scene_name) = "game"
 
                     self.scene_manager.set_scene("pause")
                 else:
@@ -67,12 +71,18 @@ class GameScene:
 
     def update(self):
         current_time = pygame.time.get_ticks()
-        if len(self.ducks) < 15 and current_time - self.last_spawn_time > self.spawn_interval:
+        if (len(self.ducks) < 15
+                and current_time - self.last_spawn_time
+                > self.spawn_interval):
             if random.choice([True, False]):
-                new_duck = Duck(x=random.randint(-200, -50), y=random.randint(50, 500), move_angle=random.randint(-30, 30),
+                new_duck = Duck(x=random.randint(-200, -50),
+                                y=random.randint(50, 500),
+                                move_angle=random.randint(-30, 30),
                                 direction="left")
             else:
-                new_duck = Duck(x=random.randint(900, 1000), y=random.randint(50, 500), move_angle=random.randint(-30, 30),
+                new_duck = Duck(x=random.randint(900, 1000),
+                                y=random.randint(50, 500),
+                                move_angle=random.randint(-30, 30),
                                 direction="right")
             self.ducks.append(new_duck)
             self.last_spawn_time = current_time
@@ -98,7 +108,7 @@ class GameScene:
         time_surface = font.render(f"{current_time_sec:.1f}", True, 'white')
         total_shots_surface = font.render(f"{self.shots_count}", True, 'white')
         hits_surface = font.render(f"{self.hits_count}", True, 'white')
-        
+
         screen.blit(score_surface, (377, 622))
         screen.blit(time_surface, (360, 659))
         screen.blit(total_shots_surface, (439, 697))
