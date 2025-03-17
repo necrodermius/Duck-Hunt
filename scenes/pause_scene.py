@@ -34,7 +34,6 @@ class PauseScene:
 
         if (hasattr(prev_scene, 'pause_start') and
                 prev_scene.pause_start is not None):
-    
             paused_duration = pygame.time.get_ticks() - prev_scene.pause_start
             prev_scene.start_time += paused_duration
             prev_scene.pause_start = None
